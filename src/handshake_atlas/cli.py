@@ -66,6 +66,12 @@ def _cmd_inspect(args: argparse.Namespace) -> None:
     print(json.dumps(out, indent=2))
 
 
+def _cmd_courtship(args: argparse.Namespace) -> None:
+    from .courtship import demo
+
+    demo(n=args.n, seed=args.seed)
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="handshake-atlas")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -84,6 +90,13 @@ def main(argv: list[str] | None = None) -> None:
     i.add_argument("handshake")
     i.add_argument("--no-evolution", action="store_true", dest="no_evolution")
     i.set_defaults(func=_cmd_inspect)
+
+    c = sub.add_parser(
+        "courtship", help="sequential-Bayesian silent-stage recognition demo"
+    )
+    c.add_argument("--n", type=int, default=2000)
+    c.add_argument("--seed", type=int, default=0)
+    c.set_defaults(func=_cmd_courtship)
 
     args = parser.parse_args(argv)
     args.func(args)
