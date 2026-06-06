@@ -8,6 +8,11 @@ dist/
 venv/
 .pytest_cache/
 .DS_Store
+# Secrets — never commit tokens
+.env
+.env.*
+**/.env
+.vercel
 # Generated atlas data is reproducible; keep a small committed sample only.
 /web/data/atlas.full.json
 *.parquet
