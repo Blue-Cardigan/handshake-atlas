@@ -8,6 +8,20 @@ function payoff(me, them) {
   return PAYOFF[me + them];
 }
 
+// Plain-language descriptions of the three post-recognition regimes, shared by the
+// atlas play animation and the emergence page.
+const REGIME_DESC = {
+  coop:
+    "Unconditional — once it recognises a partner, it cooperates forever, even if the " +
+    "partner then defects. Maximally trusting, so a mimic exploits it every round.",
+  grim:
+    "Grim trigger — cooperates after recognition until the partner defects once, then " +
+    "defects forever. A mimic steals one round, then gets nothing.",
+  tft:
+    "Tit-for-tat — cooperates after recognition, then mirrors the partner's last move: " +
+    "punishes a defection once but forgives a return to cooperation.",
+};
+
 function labelToPrefix(label) {
   return [...label].map((c) => (c === "G" ? "C" : "D"));
 }

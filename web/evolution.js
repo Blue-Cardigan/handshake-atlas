@@ -224,6 +224,8 @@ function rebuild() {
     $("ev-regime").value,
     parseFloat($("ev-mut").value)
   );
+  $("ev-regime-desc").innerHTML =
+    `<b>${WORLD.regime}</b> &mdash; ${REGIME_DESC[WORLD.regime]}`;
   render();
 }
 function stop() {

@@ -238,6 +238,7 @@ function selectHandshake(h) {
     </div>
     <div id="play-board" class="play-board"></div>
     <p id="play-caption" class="play-caption"></p>
+    <p id="play-regime-desc" class="regime-desc"></p>
     <h3>Autocorrelation</h3>
     <dl>
       ${row("Peak sidelobe", h.peak_sidelobe)}
@@ -296,6 +297,8 @@ function initPlay(h) {
     toggle.innerHTML = "&#9654; play";
     state.frame = 0;
     state.match = buildMatch(prefix, oppSel.value, regSel.value, rounds);
+    $("play-regime-desc").innerHTML =
+      `<b>${regSel.value}</b> &mdash; ${REGIME_DESC[regSel.value]}`;
     draw();
   }
   function draw() {
