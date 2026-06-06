@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emergence — handshakes evolving in a spatial population</title>
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>Emergence of <span class="accent">Secret Handshakes</span></h1>
+    <p class="sub">
+      Nothing here is designed. Each cell is an agent with a heritable recognition prefix
+      and a trait for whether it is a mimic. Agents play the gated prisoner&rsquo;s dilemma
+      against their neighbours, copy whichever neighbour scored best, and mutate. Watch
+      same-prefix cooperating clusters (one colour) form, mimics (dark dots) invade them, the
+      post-recognition regime decide whether the mimics win or fizzle, and the recognition
+      prefix turn over as cheats are escaped.
+    </p>
+  </div>
+</header>
+
+<nav class="pagenav">
+  <a href="./index.html">&larr; Periodic table</a> &nbsp;&middot;&nbsp;
+  <a href="./courtship.html">Courtship simulation (one encounter) &rarr;</a>
+</nav>
+
+<section class="controls">
+  <label>Post-recognition regime
+    <select id="ev-regime">
+      <option value="grim" selected>grim (vigilant)</option>
+      <option value="coop">coop (unconditional)</option>
+      <option value="tft">tit-for-tat</option>
+    </select>
+  </label>
+  <label>Prefix length k
+    <select id="ev-k">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+  </label>
+  <label>Mutation <span id="ev-mut-val">0.010</span>
+    <input id="ev-mut" type="range" min="0" max="0.05" step="0.005" value="0.01" />
+  </label>
+  <label>Speed <input id="ev-speed" type="range" min="0" max="200" step="10" value="140" /></label>
+  <button id="ev-play" class="play-btn">&#9654; play</button>
+  <button id="ev-step" class="play-btn">step</button>
+  <button id="ev-reset" class="play-btn">&#8634;</button>
+</section>
+
+<main class="ev-stage">
+  <canvas id="ev-grid" width="672" height="416"></canvas>
+  <div class="ev-side">
+    <p id="ev-stats" class="ev-stats"></p>
+    <canvas id="ev-chart" width="320" height="150"></canvas>
+    <ul class="ev-legend">
+      <li><span class="sw" style="background:#4ade80"></span>mean payoff (cooperation)</li>
+      <li><span class="sw" style="background:#e06a6a"></span>mimic frequency</li>
+      <li><span class="sw" style="background:#38bdf8"></span>live prefixes (diversity)</li>
+    </ul>
+    <p class="note" style="margin-top:14px">
+      Cell hue = recognition prefix. Dark dot = a mimic of that prefix. Try
+      <b>grim</b> then switch to <b>coop</b>: under unconditional cooperation the mimics
+      take over and cooperation collapses; vigilant regimes keep them rare and let
+      cooperating prefixes persist (and turn over).
+    </p>
+  </div>
+</main>
+
+<script src="./play.js"></script>
+<script src="./evolution.js"></script>
+</body>
+</html>

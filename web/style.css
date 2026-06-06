@@ -159,6 +159,18 @@ footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; gap: 18px
   border: 1px solid var(--bad); }
 .decision b { text-transform: capitalize; }
 
+/* emergence (spatial evolution) page */
+.ev-stage { display: flex; gap: 24px; flex-wrap: wrap; padding: 18px 32px 80px; align-items: flex-start; }
+#ev-grid { border: 1px solid var(--line); border-radius: 6px; image-rendering: pixelated;
+  background: var(--panel); width: 672px; height: 416px; max-width: 100%; }
+.ev-side { flex: 1; min-width: 280px; }
+.ev-stats { font-size: 0.85rem; color: var(--muted); margin: 0 0 10px; font-family: ui-monospace, monospace; }
+.ev-stats b { font-family: ui-sans-serif, system-ui, sans-serif; }
+#ev-chart { border: 1px solid var(--line); border-radius: 6px; width: 320px; height: 150px; max-width: 100%; }
+.ev-legend { list-style: none; padding: 0; margin: 10px 0 0; font-size: 0.76rem; color: var(--muted); }
+.ev-legend li { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
+.ev-legend .sw { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
+
 .tooltip { position: fixed; pointer-events: none; background: #000; color: var(--ink);
   border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 0.74rem;
   font-family: ui-monospace, monospace; z-index: 50; white-space: nowrap; opacity: 0;
