@@ -39,19 +39,24 @@ Three views of each handshake:
   strategy-complexity measure, applied to handshakes for the first time).
 * **Evolutionary** — exact analytic Moran fixation: `invade_alld` (can it invade
   defectors? the Knight 2018 test) and `mimic_fixation` (how badly a cheat that echoes the
-  prefix then defects invades it — Robson's tension, quantified per handshake).
+  prefix then defects invades it — Robson's tension, quantified per handshake). Mimic
+  fixation is reported under three post-recognition regimes (unconditional cooperate, grim,
+  tit-for-tat) to isolate *what* closes Robson's gap — the answer is vigilance, not the
+  prefix (see `docs/LEARNINGS.md`).
 
 ## Quick start
 
 ```bash
 pip install -e ".[all]"          # numpy required; sklearn/pandas optional
-pytest                            # 19 tests: automaton equivalence, Barker codes, Moran
+pytest                            # 21 tests: automaton equivalence, Barker codes, Moran
 
 # inspect a single handshake
 handshake-atlas inspect GGGBBGB   # the length-7 Barker code
 
-# (re)build the atlas the web explorer reads
-handshake-atlas build --struct-max 10 --evo-max 8 --out web/data/atlas.json
+# (re)build the atlas the web explorer reads (k<=11 keeps it light & shows Barker revival)
+handshake-atlas build --struct-max 11 --evo-max 8 --out web/data/atlas.json
+# go to k<=13 to reproduce the full Barker spectrum (heavier: ~10MB, 16382 handshakes)
+handshake-atlas build --struct-max 13 --evo-max 8 --out web/data/atlas.full.json
 ```
 
 ## The explorer

@@ -9,6 +9,30 @@ from handshake_atlas.evolution import (
 )
 
 
+def test_vigilant_regimes_close_robsons_gap():
+    # Unconditional cooperation is exploited by mimics; grim/tft police the recognised
+    # partner and punish the post-handshake defection, flipping mimic-resistance.
+    for lab in ["GB", "GBG", "GGGBBGB"]:
+        h = Handshake.from_str(lab)
+        ev = profile_evolution(h)
+        fr = ev.mimic_fixation_by_regime
+        assert fr["coop"] > ev.neutral  # bled by mimics (Robson's tension)
+        assert fr["grim"] < ev.neutral  # vigilance closes the gap
+        assert fr["tft"] < ev.neutral
+        assert ev.mimic_resistant_by_regime["grim"]
+        assert not ev.mimic_resistant_by_regime["coop"]
+
+
+def test_grim_punishes_post_handshake_defection():
+    h = Handshake.from_str("GB")
+    grim = HandshakePlayer(h, "grim")
+    mimic = MimicPlayer(h)
+    g_score, m_score = play_match(grim, mimic, 500)
+    # The mimic steals one round then both grind to mutual defection (P=1).
+    assert m_score < 1.05  # no sustained exploitation
+    assert abs(g_score - m_score) < 0.02  # near-symmetric, unlike the coop regime
+
+
 def test_self_recognition_reaches_cooperation():
     h = Handshake.from_str("GB")
     s, _ = play_match(HandshakePlayer(h), HandshakePlayer(h), 500)

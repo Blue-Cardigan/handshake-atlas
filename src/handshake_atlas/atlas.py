@@ -52,6 +52,11 @@ class AtlasRecord:
     invade_alld_favoured: bool | None
     mimic_fixation: float | None
     mimic_resistant: bool | None
+    # mimic-resistance under vigilant post-recognition regimes
+    mimic_fixation_grim: float | None
+    mimic_fixation_tft: float | None
+    mimic_resistant_grim: bool | None
+    mimic_resistant_tft: bool | None
     # retained vectors for the explorer
     sidelobes: list[int]
     correlation: list[int]
@@ -85,6 +90,10 @@ def build_record(
         invade_alld_favoured=None,
         mimic_fixation=None,
         mimic_resistant=None,
+        mimic_fixation_grim=None,
+        mimic_fixation_tft=None,
+        mimic_resistant_grim=None,
+        mimic_resistant_tft=None,
         sidelobes=list(prof.sidelobes),
         correlation=list(prof.correlation),
     )
@@ -96,6 +105,10 @@ def build_record(
         rec.invade_alld_favoured = ev.invade_alld_favoured
         rec.mimic_fixation = ev.mimic_fixation
         rec.mimic_resistant = ev.mimic_resistant
+        rec.mimic_fixation_grim = ev.mimic_fixation_by_regime["grim"]
+        rec.mimic_fixation_tft = ev.mimic_fixation_by_regime["tft"]
+        rec.mimic_resistant_grim = ev.mimic_resistant_by_regime["grim"]
+        rec.mimic_resistant_tft = ev.mimic_resistant_by_regime["tft"]
     return rec
 
 

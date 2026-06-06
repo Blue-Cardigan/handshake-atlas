@@ -57,6 +57,10 @@ def _cmd_inspect(args: argparse.Namespace) -> None:
             "invade_alld_favoured": ev.invade_alld_favoured,
             "mimic_fixation": ev.mimic_fixation,
             "mimic_resistant": ev.mimic_resistant,
+            "mimic_fixation_by_regime": {
+                r: round(v, 4) for r, v in ev.mimic_fixation_by_regime.items()
+            },
+            "mimic_resistant_by_regime": ev.mimic_resistant_by_regime,
             "neutral": ev.neutral,
         }
     print(json.dumps(out, indent=2))

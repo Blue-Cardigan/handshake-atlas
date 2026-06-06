@@ -32,10 +32,15 @@ coexist:
 
 ## 2. The atlas independently rediscovers known mathematics
 
-- **Barker codes vanish exactly where theory says.** The atlas finds Barker handshakes at
-  k = 2, 3, 4, 5, 7 and **none at k = 6, 8, 9, 10** — matching the famous result that
-  Barker codes exist only at lengths 2, 3, 4, 5, 7, 11, 13. (Build to `struct_max=13` and
-  they reappear at 11 and 13, then are conjectured to stop forever.)
+- **Barker codes vanish — and revive — exactly where theory says.** Built to
+  `struct_max=13`, the atlas finds Barker handshakes at **k = 2, 3, 4, 5, 7, 11, 13** and
+  **none at k = 6, 8, 9, 10, 12** — the complete, famous Barker spectrum, reproduced from
+  first principles with no special-casing. The length-13 set includes the canonical
+  `GGGGGBBGGBGBG`. Barker codes are conjectured to exist at no length beyond 13.
+
+  | k | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 |
+  |--|--|--|--|--|--|--|--|--|--|--|--|--|
+  | Barker handshakes | 4 | 4 | 8 | 4 | 0 | 4 | 0 | 0 | 0 | 4 | 0 | 4 |
 - **The unbordered fraction converges to its known constant.** The share of bifix-free
   prefixes settles around 0.28 as k grows — approaching the known limiting density of
   unbordered binary words (≈ 0.2677).
@@ -69,8 +74,22 @@ Joining the string view to the Moran view surfaces effects neither sees alone:
   0.05 drift baseline. No prefix structure — not Barker, not unbordered, nothing — buys
   resistance to a cheat that shows the signal and defects. The atlas makes Robson's 1990
   result tangible: **structural cleverness improves recognition but cannot fix the
-  costless-signal vulnerability.** Closing it requires changing the *strategy* (a cost, or
-  a non-forgiving post-recognition regime), not the *prefix*.
+  costless-signal vulnerability.**
+
+- **What *does* close the gap: vigilance, not the prefix.** Replacing the
+  cooperate-forever regime with a *vigilant* post-recognition rule that polices the
+  recognised partner flips mimic-resistance decisively, identically for every prefix:
+
+  | post-recognition regime | mimic fixation | verdict (neutral = 0.05) |
+  |---|--:|---|
+  | Unconditional cooperate (classical) | 0.15 | **bled** (mimic invades) |
+  | Grim (defect forever after any defection) | 0.015 | **resists** |
+  | Tit-for-tat | 0.015 | **resists** |
+
+  The mimic steals exactly one round, then the vigilant handshake collapses the
+  interaction to mutual defection, so the cheat gains nothing sustained. This localises
+  Robson's fix precisely: the recognition *signal* is irreparably forgeable; the
+  *post-recognition strategy* is where defection against cheats must live.
 
 ## 4. Can we generate endless handshakes and explore patterns? Yes.
 
@@ -78,10 +97,11 @@ The enumeration is exhaustive and the invariants are cheap, so the atlas extends
 length compute allows (structural invariants for k≤10 take ~0.4 s). Open threads the
 current tool sets up but does not yet chase:
 
-- Push `struct_max` to 13–16 and confirm the Barker death at 11/13 + the unbordered-density
-  limit numerically.
-- Add the non-forgiving / costly-handshake variants and re-measure mimic-resistance to map
-  *which* strategy modifications actually close Robson's gap.
+- Push `struct_max` to 14–16 to test the unbordered-density limit (≈ 0.2677) to more digits
+  and confirm no Barker codes appear beyond 13.
+- Sweep population size `N`, selection intensity `w`, and round count to confirm the regime
+  result (vigilance closes Robson's gap) is robust, not an artefact of the default
+  parameters.
 - Treat discovered families as codes and compute their set-level minimum Hamming distance
   (the `distance.py` utilities are ready) — i.e. how confusable whole families are under
   noise.

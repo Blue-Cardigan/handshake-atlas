@@ -43,16 +43,42 @@ class Player:
         raise NotImplementedError
 
 
+# Post-recognition regimes. The classical secret handshake cooperates unconditionally
+# once it recognises a copy ("coop"); the vigilant variants instead police the recognised
+# partner, which is what lets them punish a mimic that defects after being recognised.
+REGIMES = ("coop", "grim", "tft")
+
+
 class HandshakePlayer(Player):
-    def __init__(self, h: Handshake) -> None:
+    """Gated handshake with a configurable post-recognition regime.
+
+    Before/without recognition the behaviour is fixed (play the prefix, then defect
+    forever if the opponent did not echo it). After recognition:
+
+    * ``coop`` -- cooperate forever (Robson's costless handshake; mimic-exploitable).
+    * ``grim`` -- cooperate until the recognised partner defects once, then defect forever.
+    * ``tft``  -- cooperate, then mirror the partner's previous move (forgiving).
+    """
+
+    def __init__(self, h: Handshake, regime: str = "coop") -> None:
         self.p = h.prefix
         self.k = h.length
+        if regime not in REGIMES:
+            raise ValueError(f"unknown regime {regime!r}")
+        self.regime = regime
 
     def move(self, opp_history: list[int]) -> int:
         r = len(opp_history)
         if r < self.k:
             return self.p[r]
-        return GOOD if tuple(opp_history[: self.k]) == self.p else BAD
+        if tuple(opp_history[: self.k]) != self.p:
+            return BAD  # not recognised -> defect forever
+        post = opp_history[self.k :]  # partner's moves after the recognition window
+        if self.regime == "coop":
+            return GOOD
+        if self.regime == "grim":
+            return BAD if any(m == BAD for m in post) else GOOD
+        return post[-1] if post else GOOD  # tft
 
 
 class MimicPlayer(Player):
@@ -116,14 +142,32 @@ def moran_fixation(a: float, b: float, c: float, d: float, n: int, w: float) -> 
     return 1.0 / (1.0 + total)
 
 
+def mimic_fixation(
+    h: Handshake, regime: str, population: int, rounds: int, selection: float
+) -> float:
+    """Fixation probability of a mimic (echo prefix, then defect) invading a population
+    of the handshake running ``regime`` after recognition."""
+
+    def hp() -> HandshakePlayer:
+        return HandshakePlayer(h, regime)
+
+    m_self, _ = play_match(MimicPlayer(h), MimicPlayer(h), rounds)
+    m_vs_h, h_vs_m = play_match(MimicPlayer(h), hp(), rounds)
+    self_pay, _ = play_match(hp(), hp(), rounds)
+    return moran_fixation(m_self, m_vs_h, h_vs_m, self_pay, population, selection)
+
+
 @dataclass(frozen=True)
 class EvolutionProfile:
     self_payoff: float  # per-round payoff of the handshake against a copy of itself
     payoff_vs_alld: float  # per-round payoff against unconditional defectors (probe cost)
     invade_alld: float  # fixation prob of the handshake invading an AllD population
     invade_alld_favoured: bool  # invade_alld > neutral (1/n)
-    mimic_fixation: float  # fixation prob of a mimic invading the handshake
+    mimic_fixation: float  # fixation prob of a mimic vs the unconditional (coop) handshake
     mimic_resistant: bool  # mimic_fixation < neutral (rare -- Robson's tension)
+    # mimic-resistance under vigilant post-recognition regimes:
+    mimic_fixation_by_regime: dict[str, float]
+    mimic_resistant_by_regime: dict[str, bool]
     neutral: float  # 1/n, the drift baseline
 
 
@@ -141,18 +185,20 @@ def profile_evolution(
     # Handshake (A) invading AllD (B).
     invade_alld = moran_fixation(self_payoff, h_vs_d, d_vs_h, d_alld, n, selection)
 
-    # Mimic (A) invading the handshake (B).
-    mimic = MimicPlayer(h)
-    m_self, _ = play_match(MimicPlayer(h), MimicPlayer(h), rounds)
-    m_vs_h, h_vs_m = play_match(mimic, HandshakePlayer(h), rounds)
-    mimic_fixation = moran_fixation(m_self, m_vs_h, h_vs_m, self_payoff, n, selection)
+    # Mimic resistance under each post-recognition regime.
+    fix_by_regime = {
+        regime: mimic_fixation(h, regime, n, rounds, selection) for regime in REGIMES
+    }
+    res_by_regime = {regime: fix < neutral for regime, fix in fix_by_regime.items()}
 
     return EvolutionProfile(
         self_payoff=self_payoff,
         payoff_vs_alld=h_vs_d,
         invade_alld=invade_alld,
         invade_alld_favoured=invade_alld > neutral,
-        mimic_fixation=mimic_fixation,
-        mimic_resistant=mimic_fixation < neutral,
+        mimic_fixation=fix_by_regime["coop"],
+        mimic_resistant=res_by_regime["coop"],
+        mimic_fixation_by_regime=fix_by_regime,
+        mimic_resistant_by_regime=res_by_regime,
         neutral=neutral,
     )

@@ -15,7 +15,8 @@ const METRIC_LABELS = {
   linear_complexity: "Linear complexity",
   lz76: "LZ76",
   invade_alld: "Invade-AllD fixation",
-  mimic_fixation: "Mimic fixation",
+  mimic_fixation: "Mimic fixation (unconditional)",
+  mimic_fixation_grim: "Mimic fixation (grim)",
 };
 
 let ATLAS = null;
@@ -205,8 +206,12 @@ function selectHandshake(h) {
         ${row("Payoff vs AllD", fmt(h.payoff_vs_alld))}
         ${row("Invade AllD", fmt(h.invade_alld))}
         ${boolRow("Invades defectors", h.invade_alld_favoured)}
-        ${row("Mimic fixation", fmt(h.mimic_fixation))}
-        ${boolRow("Mimic-resistant", h.mimic_resistant)}
+      </dl>
+      <h3>Mimic-resistance by regime <span style="color:var(--muted);text-transform:none;letter-spacing:0">(fixation; resistant if &lt; ${fmt(ATLAS.meta.evolution ? 1 / ATLAS.meta.evolution.population : 0)})</span></h3>
+      <dl>
+        ${regimeRow("Unconditional (coop)", h.mimic_fixation, h.mimic_resistant)}
+        ${regimeRow("Grim", h.mimic_fixation_grim, h.mimic_resistant_grim)}
+        ${regimeRow("Tit-for-tat", h.mimic_fixation_tft, h.mimic_resistant_tft)}
       </dl>`
     : `<h3>Evolutionary</h3><p class="desc">Not computed for k=${h.length} (beyond evo-max=${ATLAS.meta.evo_max}).</p>`;
 
@@ -253,6 +258,12 @@ function row(k, v) {
 function boolRow(k, v) {
   if (v == null) return row(k, "—");
   return `<dt>${k}</dt><dd class="${v ? "yes" : "no"}">${v ? "yes" : "no"}</dd>`;
+}
+function regimeRow(k, fix, resistant) {
+  if (fix == null) return row(k, "—");
+  const cls = resistant ? "yes" : "no";
+  const mark = resistant ? " ✓resists" : " ✗bled";
+  return `<dt>${k}</dt><dd class="${cls}">${fmt(fix)}${mark}</dd>`;
 }
 function sidelobeSpark(sidelobes) {
   if (!sidelobes || !sidelobes.length) return "";
