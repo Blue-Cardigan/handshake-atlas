@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "handshake-atlas"
+version = "0.1.0"
+description = "An enumerated atlas of iterated prisoner's dilemma secret handshakes, profiled by a joint structural-invariant battery and organized into a periodic table of handshake families."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Red-Cardigan" }]
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+# Evolutionary robustness (Moran process, mimic-resistance) reuses the Axelrod-Python engine.
+evolution = ["axelrod>=4.13"]
+# Taxonomy clustering + family naming.
+taxonomy = ["scikit-learn>=1.3"]
+# Atlas export to columnar formats.
+io = ["pandas>=2.0", "pyarrow>=14"]
+all = ["axelrod>=4.13", "scikit-learn>=1.3", "pandas>=2.0", "pyarrow>=14"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+handshake-atlas = "handshake_atlas.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

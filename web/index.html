@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Periodic Table of Secret Handshakes</title>
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>The Periodic Table of <span class="accent">Secret Handshakes</span></h1>
+    <p class="sub">
+      Every recognition prefix <code>p &isin; {Good, Bad}<sup>k</sup></code> of the
+      iterated prisoner&rsquo;s dilemma handshake strategy &mdash; play the prefix, then
+      cooperate forever with anyone who echoed it, defect forever otherwise &mdash;
+      enumerated and profiled by a joint structural&ndash;evolutionary invariant battery.
+    </p>
+  </div>
+</header>
+
+<section class="controls">
+  <label>Colour by
+    <select id="metric">
+      <option value="family">Family</option>
+      <option value="min_automaton_states">Automaton size (Rubinstein complexity)</option>
+      <option value="merit_factor">Merit factor (autocorrelation quality)</option>
+      <option value="linear_complexity">Linear complexity</option>
+      <option value="lz76">LZ76 compressibility</option>
+      <option value="invade_alld">Invades defectors (fixation prob.)</option>
+      <option value="mimic_fixation">Bled by mimics (fixation prob.)</option>
+    </select>
+  </label>
+  <label>Family
+    <select id="familyFilter"><option value="">all</option></select>
+  </label>
+  <label class="check"><input type="checkbox" id="barkerOnly" /> Barker only</label>
+  <label class="check"><input type="checkbox" id="unborderedOnly" /> Unbordered only</label>
+  <label>Search <input id="search" type="text" placeholder="GGBBGB" size="10" /></label>
+  <span id="count" class="count"></span>
+</section>
+
+<div id="legend" class="legend"></div>
+
+<main id="table" class="table"></main>
+
+<aside id="detail" class="detail hidden"></aside>
+
+<footer>
+  <span id="meta"></span>
+  <span class="note">Drift baseline 1/N. Mimic-resistance is near-universally false &mdash;
+  Robson&rsquo;s (1990) tension: a costless handshake is always invadable by a cheat that
+  echoes the signal then defects.</span>
+</footer>
+
+<script src="./app.js"></script>
+</body>
+</html>
