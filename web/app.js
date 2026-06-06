@@ -221,6 +221,23 @@ function selectHandshake(h) {
     <div class="pattern">${bits}</div>
     <span class="famtag" style="background:${famColor}">${h.family}</span>
     <p class="desc">${fam ? fam.description : ""}</p>
+    <h3>Watch it play</h3>
+    <div class="play-controls">
+      <select id="play-opp">
+        <option value="self">vs a copy of itself</option>
+        <option value="AllD">vs AllD (defectors)</option>
+        <option value="mimic">vs a mimic</option>
+      </select>
+      <select id="play-regime" title="post-recognition regime">
+        <option value="coop">coop</option>
+        <option value="grim">grim</option>
+        <option value="tft">tft</option>
+      </select>
+      <button id="play-toggle" class="play-btn">&#9654; play</button>
+      <button id="play-reset" class="play-btn" title="reset">&#8634;</button>
+    </div>
+    <div id="play-board" class="play-board"></div>
+    <p id="play-caption" class="play-caption"></p>
     <h3>Autocorrelation</h3>
     <dl>
       ${row("Peak sidelobe", h.peak_sidelobe)}
@@ -248,8 +265,116 @@ function selectHandshake(h) {
   d.querySelector(".close").addEventListener("click", () => {
     d.classList.add("hidden");
     SELECTED = null;
+    stopPlay();
     render();
   });
+  initPlay(h);
+}
+
+// --- per-handshake play animation -----------------------------------------
+let PLAY = { timer: null };
+
+function stopPlay() {
+  if (PLAY.timer) clearInterval(PLAY.timer);
+  PLAY.timer = null;
+}
+
+function initPlay(h) {
+  stopPlay();
+  const prefix = labelToPrefix(h.label);
+  const rounds = Math.max(8, h.length + 6);
+  const board = $("play-board");
+  const caption = $("play-caption");
+  const oppSel = $("play-opp");
+  const regSel = $("play-regime");
+  const toggle = $("play-toggle");
+
+  const state = { frame: 0, match: null };
+
+  function rebuild() {
+    stopPlay();
+    toggle.innerHTML = "&#9654; play";
+    state.frame = 0;
+    state.match = buildMatch(prefix, oppSel.value, regSel.value, rounds);
+    draw();
+  }
+  function draw() {
+    renderPlay(board, state.match, state.frame);
+    caption.textContent = playCaption(state.match, state.frame);
+  }
+  function step() {
+    if (state.frame < state.match.rounds.length) {
+      state.frame++;
+      draw();
+    } else {
+      stopPlay();
+      toggle.innerHTML = "&#9654; play";
+    }
+  }
+
+  oppSel.addEventListener("change", rebuild);
+  regSel.addEventListener("change", rebuild);
+  $("play-reset").addEventListener("click", rebuild);
+  toggle.addEventListener("click", () => {
+    if (PLAY.timer) {
+      stopPlay();
+      toggle.innerHTML = "&#9654; play";
+      return;
+    }
+    if (state.frame >= state.match.rounds.length) state.frame = 0;
+    toggle.innerHTML = "&#10073;&#10073; pause";
+    PLAY.timer = setInterval(step, 650);
+  });
+
+  rebuild();
+}
+
+function renderPlay(board, match, frame) {
+  const n = match.rounds.length;
+  const k = match.k;
+  let nums = "";
+  let them = "";
+  let me = "";
+  for (let i = 0; i < n; i++) {
+    const shown = i < frame;
+    const rd = match.rounds[i];
+    const pfx = i < k ? " pfx" : "";
+    nums += `<div class="pc-num${pfx}">${i + 1}</div>`;
+    them += playCell(shown ? rd.them : null, pfx);
+    me += playCell(shown ? rd.me : null, pfx);
+  }
+  const score = frame > 0 ? match.rounds[frame - 1].scoreMe : 0;
+  const per = frame > 0 ? (score / frame).toFixed(2) : "0.00";
+  board.innerHTML =
+    `<div class="pc-row pc-head"><div class="pc-label">round</div>${nums}</div>` +
+    `<div class="pc-row"><div class="pc-label">them</div>${them}</div>` +
+    `<div class="pc-row"><div class="pc-label">you</div>${me}</div>` +
+    `<div class="pc-foot">first ${k} = prefix · payoff to you ` +
+    `<b>${score}</b> (${per}/round)</div>`;
+}
+
+function playCell(move, pfx) {
+  if (move === null) return `<div class="pc-cell empty${pfx}"></div>`;
+  return `<div class="pc-cell ${move}${pfx}">${move}</div>`;
+}
+
+function playCaption(match, frame) {
+  const k = match.k;
+  if (frame === 0) return "Press play. The first " + k + " rounds are the handshake prefix.";
+  if (frame <= k) return `Playing the recognition prefix (round ${frame} of ${k}).`;
+  // past the prefix
+  const opp = match.opponent;
+  const reg = match.regime;
+  if (opp === "self") return "Both echoed the prefix — mutual recognition, cooperating forever (R=3 each).";
+  if (opp === "AllD") {
+    return match.recognised
+      ? "AllD happens to match the all-defect prefix → mis-recognised as kin; you cooperate into exploitation."
+      : "AllD never echoed a cooperative bit → not recognised; you defect forever (the prefix's cooperative bits were the probe cost).";
+  }
+  // mimic
+  if (reg === "coop")
+    return "The mimic forged the prefix, was recognised, and now defects — coop keeps cooperating, so it is exploited (S=0).";
+  return "The mimic defects after the handshake; the vigilant regime punishes → mutual defection (P=1). Forgery yields nothing.";
 }
 
 function row(k, v) {

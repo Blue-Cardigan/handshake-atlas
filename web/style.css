@@ -92,6 +92,73 @@ footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; gap: 18px
   font-size: 0.72rem; color: var(--muted); backdrop-filter: blur(8px); }
 .note { color: #5d6781; }
 
+/* per-handshake play animation */
+.play-controls { display: flex; gap: 8px; align-items: center; margin: 4px 0 10px; flex-wrap: wrap; }
+.play-controls select { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line);
+  border-radius: 6px; padding: 4px 6px; font-size: 0.78rem; }
+.play-btn { background: var(--accent); color: #04231c; border: none; border-radius: 6px;
+  padding: 4px 10px; font-size: 0.78rem; font-weight: 650; cursor: pointer; }
+.play-btn:hover { filter: brightness(1.1); }
+.play-board { font-family: ui-monospace, monospace; overflow-x: auto; padding-bottom: 4px; }
+.pc-row { display: flex; gap: 2px; align-items: center; margin-bottom: 2px; }
+.pc-label { width: 38px; flex: none; color: var(--muted); font-size: 0.66rem; text-align: right;
+  padding-right: 4px; }
+.pc-num { width: 18px; flex: none; text-align: center; color: var(--muted); font-size: 0.6rem; }
+.pc-num.pfx { color: var(--accent); }
+.pc-cell { width: 18px; height: 18px; flex: none; border-radius: 3px; display: flex;
+  align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 700;
+  color: #04231c; transition: background 0.2s; }
+.pc-cell.C { background: var(--good); }
+.pc-cell.D { background: var(--bad); color: #fff; }
+.pc-cell.empty { background: var(--panel-2); }
+.pc-cell.pfx { box-shadow: inset 0 -2px 0 var(--accent); }
+.pc-head .pc-cell, .pc-head { height: auto; }
+.pc-foot { font-size: 0.72rem; color: var(--muted); margin-top: 6px; }
+.pc-foot b { color: var(--ink); }
+.play-caption { font-size: 0.78rem; color: var(--muted); line-height: 1.45; min-height: 2.4em;
+  margin: 8px 0 4px; }
+.pagenav { padding: 4px 32px 0; }
+.pagenav a { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+.pagenav a:hover { text-decoration: underline; }
+
+/* courtship simulation page */
+.c-stage { padding: 18px 32px 90px; max-width: 760px; }
+.c-stage h3 { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--accent); margin: 22px 0 10px; }
+.c-muted { color: var(--muted); font-size: 0.85rem; }
+.c-step { font-size: 0.85rem; margin: 6px 0 0; }
+.recip { font-weight: 650; }
+.recip.yes { color: var(--good); }
+.recip.no { color: var(--bad); }
+.cbar { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
+.cbar-lab { width: 92px; flex: none; font-size: 0.8rem; color: var(--muted); text-align: right; }
+.cbar-track { flex: 1; height: 14px; background: var(--panel-2); border-radius: 7px; overflow: hidden; }
+.cbar-fill { display: block; height: 100%; border-radius: 7px; transition: width 0.4s ease; }
+.cbar-val { width: 44px; flex: none; font-family: ui-monospace, monospace; font-size: 0.78rem; }
+.belief { position: relative; height: 26px; background: var(--panel-2); border-radius: 7px;
+  overflow: hidden; }
+.belief-fill { position: absolute; left: 0; top: 0; height: 100%;
+  background: linear-gradient(90deg, #2a3550, var(--good)); transition: width 0.4s ease; }
+.belief .thr { position: absolute; top: -3px; height: 32px; width: 2px; }
+.belief .thr.hi { background: var(--good); }
+.belief .thr.lo { background: var(--bad); }
+.belief-marker { position: absolute; top: -4px; height: 34px; width: 3px; background: var(--ink);
+  transition: left 0.4s ease; }
+.belief-labels { display: flex; justify-content: space-between; font-size: 0.72rem;
+  color: var(--muted); margin-top: 4px; }
+.belief-labels span:nth-child(2) { color: var(--ink); font-family: ui-monospace, monospace; }
+.hstrip { display: flex; gap: 3px; align-items: flex-end; min-height: 42px; }
+.hcell { width: 12px; border-radius: 2px 2px 0 0; }
+.hcell.yes { background: var(--good); }
+.hcell.no { background: var(--bad); }
+.decision { margin-top: 22px; padding: 12px 16px; border-radius: 8px; font-weight: 700;
+  font-size: 1rem; letter-spacing: 0.02em; }
+.decision.approach { background: rgba(74,222,128,0.15); color: var(--good);
+  border: 1px solid var(--good); }
+.decision.withdraw { background: rgba(224,106,106,0.12); color: var(--bad);
+  border: 1px solid var(--bad); }
+.decision b { text-transform: capitalize; }
+
 .tooltip { position: fixed; pointer-events: none; background: #000; color: var(--ink);
   border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 0.74rem;
   font-family: ui-monospace, monospace; z-index: 50; white-space: nowrap; opacity: 0;

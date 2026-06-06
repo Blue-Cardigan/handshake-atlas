@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Silent Stages — a sequential-Bayesian courtship simulation</title>
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>The <span class="accent">Silent Stages</span></h1>
+    <p class="sub">
+      The recognition layer the handshake atlas leaves out: an observer infers a partner&rsquo;s
+      hidden type from noisy, graded reciprocations, escalating probe intensity and
+      approaching only when the posterior that the partner is genuinely interested crosses a
+      threshold. A mimic reciprocates cheap probes but balks at costly ones &mdash; so
+      escalation, not a cleverer opener, is what exposes it.
+    </p>
+  </div>
+</header>
+
+<nav class="pagenav"><a href="./index.html">&larr; Periodic table of handshakes</a></nav>
+
+<section class="controls">
+  <label>Partner is
+    <select id="c-type">
+      <option value="interested">interested</option>
+      <option value="mimic" selected>a mimic</option>
+      <option value="indifferent">indifferent</option>
+    </select>
+  </label>
+  <label>Probe policy
+    <select id="c-policy">
+      <option value="info">info-greedy (escalates)</option>
+      <option value="fixed">fixed cheap probe</option>
+      <option value="ramp">ramp</option>
+    </select>
+  </label>
+  <label>Observer
+    <select id="c-model">
+      <option value="full">full (knows mimics exist)</option>
+      <option value="naive">naive (no mimic hypothesis)</option>
+    </select>
+  </label>
+  <label>Signal reliability <span id="c-rel-val">0.85</span>
+    <input id="c-rel" type="range" min="0.5" max="0.98" step="0.01" value="0.85" />
+  </label>
+  <label>Seed <input id="c-seed" type="number" value="1" min="1" style="width:64px" /></label>
+  <button id="c-play" class="play-btn">&#9654; play</button>
+  <button id="c-step" class="play-btn">step</button>
+  <button id="c-reset" class="play-btn">&#8634;</button>
+</section>
+
+<main id="c-stage" class="c-stage"></main>
+
+<footer>
+  <span class="note">Deterministic given the seed. Approach when P(interested) &ge; 0.9,
+  withdraw when &le; 0.1, else keep probing (max 20 steps). Try the mimic against the naive
+  observer, then against the full model with info-greedy escalation.</span>
+</footer>
+
+<script src="./courtship.js"></script>
+</body>
+</html>
