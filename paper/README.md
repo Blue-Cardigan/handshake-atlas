@@ -4,17 +4,18 @@ arXiv draft reporting the novel findings from `handshake-atlas`.
 
 ## Build
 
-No build was run locally (no TeX toolchain on the authoring machine). Compile with:
+Compiled to `main.pdf` (11 pages) with TinyTeX. Rebuild with:
 
 ```bash
-latexmk -pdf main.tex      # or: pdflatex main && bibtex main && pdflatex main x2
+pdflatex main && bibtex main && pdflatex main && pdflatex main   # or: latexmk -pdf main.tex
 ```
 
 Or upload `main.tex`, `sec_*.tex`, and `references.bib` to Overleaf.
 
-Dependencies: `article`, `amsmath/amssymb/amsthm`, `booktabs`, `algorithm`, `algorithmic`,
-`natbib`, `hyperref`, `cleveref`. Suggested arXiv categories and classifications are in the
-`main.tex` header comment (primary `math.CO`; cross-list `cs.GT`, `nlin.CG`, `q-bio.PE`).
+Dependencies: `article`, `amsmath/amssymb/amsthm`, `booktabs`, `algorithm`, `algpseudocode`
+(algorithmicx), `natbib`, `hyperref`, `cleveref`. Suggested arXiv categories and
+classifications are in the `main.tex` header comment (primary `math.CO`; cross-list `cs.GT`,
+`nlin.CG`, `q-bio.PE`).
 
 ## Files
 

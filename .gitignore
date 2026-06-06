@@ -11,3 +11,12 @@ venv/
 # Generated atlas data is reproducible; keep a small committed sample only.
 /web/data/atlas.full.json
 *.parquet
+
+# LaTeX build intermediates (keep main.pdf)
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.out
+paper/*.bbl
+paper/*.fls
+paper/*.fdb_latexmk
