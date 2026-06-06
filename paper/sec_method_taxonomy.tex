@@ -1,0 +1,158 @@
+\section{The atlas pipeline}\label{sec:method}
+
+The atlas is produced by a single deterministic pipeline that takes a length bound
+and returns, for every handshake within that bound, a vector of invariants drawn from
+three views of the recognition prefix. No step uses randomness, and every numeric
+column is reproducible to the last digit from the prefix alone.
+
+\subsection{Enumeration}
+
+For a fixed length $k$ the prefix alphabet is $\{C,D\}$, so the stratum of length-$k$
+handshakes has $2^{k}$ members. We enumerate each stratum exhaustively in big-endian
+order, reading $C$ as the low symbol and $D$ as the high symbol within a fixed-width
+binary counter, and concatenate strata by increasing $k$. The order is total and
+canonical, so two runs of the pipeline visit handshakes in the same sequence and assign
+the same index to each. Structural invariants are computed for every handshake up to
+$k\le 13$, which is $\sum_{k=1}^{13} 2^{k}=16{,}382$ handshakes. The evolutionary view,
+which requires a pairwise match per handshake, is computed up to $k\le 8$, which is
+$\sum_{k=1}^{8} 2^{k}=510$ handshakes. Both bounds are exhaustive within their stratum:
+no sampling, no pruning.
+
+\subsection{The joint invariant battery}
+
+The invariants are grouped into three views, matching the three ways a recognition
+prefix can be read: as a string, as a machine, and as a player.
+
+\paragraph{String view.}
+The prefix $p$ is mapped to its $\pm1$ image and profiled as a finite binary sequence.
+We record the aperiodic autocorrelation sidelobes $c_v=\sum_j a_j a_{j+v}$, the peak
+sidelobe $\max_v |c_v|$, and the merit factor $N^2/(2\sum_v c_v^2)$; a handshake is a
+Barker code when its peak sidelobe is at most $1$ \citep{barker1953,turyn1961}. From the
+Guibas--Odlyzko self-overlap (correlation) polynomial we read whether $p$ has a proper
+border, that is a proper prefix equal to a suffix; a prefix with no proper border is
+unbordered (bifix-free) \citep{guibas1981}. Compressibility is measured three ways:
+LZ76 parsing complexity \citep{lempel1976}, linear complexity via the Berlekamp--Massey
+recurrence \citep{massey1969}, and factor complexity. These columns are exact integer or
+rational functions of $p$.
+
+\paragraph{Automaton view.}
+The gated strategy $H_p$ is realised as a Moore machine. The construction has a spine of
+$k$ states that play out $p$ and check the opponent against it round by round, a
+post-recognition regime $\rho$, and a defect-forever sink, giving an unminimised machine
+of $2k+2$ states. We then minimise by partition refinement: states are split until no
+block contains two states with different outputs or with a transition leaving the block
+on some symbol, which is exactly the Myhill--Nerode quotient
+\citep{nerode1958,hopcroft1971}. The resulting state count $m(p)$ is the
+Rubinstein strategy-complexity measure of $H_p$ \citep{rubinstein1986}. Because the
+refinement is canonical, $m(p)$ is a deterministic function of $p$ and $\rho$.
+
+\paragraph{Evolutionary view.}
+For the evolutionary columns each handshake is played in a deterministic pairwise match
+against a fixed reference set under the payoffs $R=3,\,S=0,\,T=5,\,P=1$. Since both
+players are deterministic, the round-by-round play and therefore the exact mean
+per-round payoff over $n$ rounds ($n=200$ by default) are fixed, with no Monte Carlo
+estimate. These mean payoffs are the entries of a constant-selection fitness comparison,
+which we feed to the closed-form fixation probability of a single mutant in a
+finite Moran population \citep{moran1958,nowak2004}, with default population $N=20$ and
+selection intensity $w=0.1$; the neutral-drift baseline is $1/N$. Two tests use this
+machinery. The \emph{invade-AllD} test computes the fixation probability of $H_p$ under
+the \textsc{coop} regime invading a population of unconditional defectors, isolating the
+cost of carrying a recognition prefix. The \emph{mimic-resistance} test computes the
+fixation probability of a mimic of $p$ (which plays $p$ then defects forever) against a
+resident population of $H_p$, run once per post-recognition regime
+$\rho\in\{\textsc{coop},\textsc{grim},\textsc{tft}\}$, to ask whether the regime punishes
+a forged signal.
+
+\subsection{Determinism and reproducibility}
+
+Every stage is a deterministic function of the prefix and a small fixed parameter set.
+The enumeration order is canonical, the minimisation is canonical, the match play is
+deterministic, and the fixation probabilities are evaluated in closed form rather than
+simulated. Re-running the pipeline reproduces every number exactly; there is no random
+seed to fix.
+
+\begin{algorithm}[t]
+\caption{The atlas pipeline for length bound $K$}
+\label{alg:pipeline}
+\begin{algorithmic}[1]
+\For{$k = 1$ to $K$}
+  \For{each $p \in \{C,D\}^k$ in big-endian order}
+    \State \textbf{String:} compute autocorrelation sidelobes, peak sidelobe, merit
+      factor, Barker flag; self-overlap and unbordered flag; LZ76, linear, and factor
+      complexity.
+    \State \textbf{Automaton:} build the $2k+2$-state Moore machine for $H_p$;
+      partition-refine to obtain $m(p)$.
+    \If{$k \le 8$}
+      \State \textbf{Evolutionary:} run the deterministic match for exact mean payoffs;
+        evaluate the closed-form Moran fixation for invade-AllD and for
+        mimic-resistance under each $\rho$.
+    \EndIf
+    \State emit the invariant row for $p$.
+  \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Scope of the distance column}
+
+One natural invariant is deliberately absent at the per-handshake level. Within a full
+length-$k$ stratum every prefix has a neighbour at Hamming distance $1$ (flip any single
+bit), so the minimum distance from a handshake to the rest of its stratum is trivially
+$1$ and carries no information. We therefore treat Hamming distance as a set-level
+quantity, useful for separating families or code sets, and not as a per-handshake
+column in the atlas.
+
+\section{A taxonomy of handshake families}\label{sec:families}
+
+The invariants induce a coarse classification of handshakes into six families. Each
+family is a predicate over the invariant vector, and a handshake is assigned to the
+first family whose predicate it satisfies, in the order Constant, Alternating, Barker,
+Unbordered, Self-similar, Generic. The first-match rule makes the assignment a total
+function, with Generic as the catch-all for prefixes that no earlier predicate selects.
+\Cref{tab:families} states the predicates.
+
+\begin{table}[t]
+\caption{The six handshake families, defined as priority predicates over the invariants.
+A handshake is assigned to the first family whose predicate it satisfies, top to bottom.}
+\label{tab:families}
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+Family & Defining predicate & Characterisation \\
+\midrule
+Constant     & $p \in \{C^k, D^k\}$                          & one repeated symbol \\
+Alternating  & $p = (CD)^{\ast}$ or $(DC)^{\ast}$ truncated  & period-two pattern \\
+Barker       & peak autocorrelation sidelobe $\le 1$         & flat-sidelobe code \\
+Unbordered   & no proper border (bifix-free)                 & no prefix-suffix overlap \\
+Self-similar & low LZ76 / linear complexity, not above       & compressible, repetitive \\
+Generic      & none of the above                             & incompressible bulk \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The taxonomy recovers the geometry}
+
+The families are rule-based, so it is fair to ask whether they correspond to any
+structure in the invariants themselves or merely reflect the thresholds chosen.
+Clustering the standardised invariant vectors directly answers this.
+
+\begin{observation}[$k$-means recovers the rule families]
+\label{obs:kmeans}
+For $k\le 8$, $k$-means over the standardised joint-invariant vectors recovers the
+rule-based families as distinct clusters: one cluster is $100\%$ Constant, one is $85\%$
+Barker, two are $88$--$100\%$ Unbordered, and one is $76\%$ Self-similar. The
+unsupervised geometry therefore aligns with the priority predicates, rather than the
+predicates imposing arbitrary cuts on an otherwise structureless space.
+\end{observation}
+
+\subsection{A thin structured shell}
+
+The structured families do not grow with the space. There are always exactly two
+Constant handshakes, $C^k$ and $D^k$, at every length, and for $k\ge 3$ there are always
+exactly two Alternating handshakes. The stratum total, by contrast, doubles at each
+length. The share of these structured families therefore tends to zero: the recognisable,
+compressible prefixes form a thin shell inside an exponentially growing bulk of Generic
+handshakes. The same picture holds for the unbordered fraction, which decreases along the
+length axis and converges from above toward the known bifix-free density
+$\approx 0.2678$ \citep{oeisA003000}; the special structure is a vanishing minority of
+the recognition space.

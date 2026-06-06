@@ -1,0 +1,53 @@
+\documentclass[11pt]{article}
+
+% --- arXiv metadata (set on submission) ---------------------------------
+% Primary category: math.CO ; cross-list: cs.GT, nlin.CG, q-bio.PE
+% MSC-class: 91A22 (Primary) 68R15, 92D15 (Secondary)
+% ACM-class: F.2.2; I.2.7; J.4
+% ------------------------------------------------------------------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{observation}{Observation}
+\newtheorem{conjecture}{Conjecture}
+
+\crefname{observation}{Observation}{Observations}
+\Crefname{observation}{Observation}{Observations}
+\crefname{conjecture}{Conjecture}{Conjectures}
+\Crefname{conjecture}{Conjecture}{Conjectures}
+\crefname{algorithm}{Algorithm}{Algorithms}
+
+\title{A Periodic Table of Secret Handshakes:\\
+Enumerating and Profiling Recognition-Prefix Strategies\\
+for the Iterated Prisoner's Dilemma}
+
+% TODO: set author name and affiliation before submission.
+\author{Red-Cardigan}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\input{sec_intro_background}
+\input{sec_method_taxonomy}
+\input{sec_results}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,291 @@
+\section{Results}\label{sec:results}
+
+\subsection{Validation: the Barker spectrum}
+
+The autocorrelation module recovers the complete known Barker spectrum without being told
+what it is. Run blind over every handshake with $k\le 13$, the module reports peak sidelobe
+$\le 1$ at exactly $k = 2,3,4,5,7,11,13$ and at no other length up to $13$ (\cref{tab:barker}).
+This matches the established spectrum of binary Barker sequences \citep{barker1953,turyn1961}.
+The spectrum is nowhere encoded in the software: the module computes aperiodic
+autocorrelation sidelobes from the $\pm1$ image of each prefix and applies the peak-$\le 1$
+test, so the agreement is an emergent property of the enumeration rather than a lookup.
+
+\begin{table}[t]
+  \centering
+  \caption{Barker handshakes per length (peak autocorrelation sidelobe $\le 1$), counted over
+  the enumerated space for $k\le 13$. Lengths $6,8,9,10,12$ contribute none. The $k=13$ set
+  includes $CCCCCDDCCDCDC$.}
+  \label{tab:barker}
+  \begin{tabular}{lr}
+    \toprule
+    Length $k$ & Barker handshakes \\
+    \midrule
+    2  & 4 \\
+    3  & 4 \\
+    4  & 8 \\
+    5  & 4 \\
+    7  & 4 \\
+    11 & 4 \\
+    13 & 4 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Because a classical invariant from coding theory falls out of an enumeration built for an
+unrelated purpose, the autocorrelation pipeline is calibrated: subsequent structural readings
+from the same machinery can be taken at face value.
+
+\subsection{The minimal-automaton band}
+
+The minimal-automaton size of a gated strategy is confined to a narrow band, well below the
+naive construction. Building $H_p$ directly costs $2k+2$ states. After minimisation by
+partition refinement (Myhill--Nerode), the realised count $m(p)$ never reaches that bound.
+
+\begin{observation}[Automaton band]\label{obs:band}
+For every $k$ with $1\le k\le 11$, $m(p)$ ranges over exactly the interval $[\,k+2,\ 2k+1\,]$,
+attaining every integer value in it, against the unminimised construction of $2k+2$ states.
+The minimum $k+2$ is reached by $D$-tailed prefixes (e.g.\ $DDDDDD$, $CDDDDD$); the maximum
+$2k+1$ by $C$-heavy prefixes (e.g.\ $CCCCCC$, $CCCDDC$).
+\end{observation}
+
+\cref{tab:autoband} lists the band endpoints. The $C/D$ asymmetry between the extremes has a
+mechanical source: the post-recognition regime emits $C$ on a recognised partner while the
+defect-forever terminal emits $D$, so a $D$-tailed prefix can merge its closing rounds into the defection
+terminal, collapsing states, whereas a $C$-heavy prefix cannot fold into either terminal and
+keeps its rounds distinct.
+
+\begin{table}[t]
+  \centering
+  \caption{Minimal-automaton size band. For each $k\le 11$, $m(p)$ takes every value in
+  $[k+2,2k+1]$; the unminimised construction uses $2k+2$ states.}
+  \label{tab:autoband}
+  \begin{tabular}{lrrr}
+    \toprule
+    Length $k$ & Minimum $m(p)$ & Maximum $m(p)$ & Unminimised \\
+    \midrule
+    1  & 3  & 3  & 4  \\
+    2  & 4  & 5  & 6  \\
+    3  & 5  & 7  & 8  \\
+    4  & 6  & 9  & 10 \\
+    5  & 7  & 11 & 12 \\
+    6  & 8  & 13 & 14 \\
+    7  & 9  & 15 & 16 \\
+    8  & 10 & 17 & 18 \\
+    9  & 11 & 19 & 20 \\
+    10 & 12 & 21 & 22 \\
+    11 & 13 & 23 & 24 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{conjecture}[Band extends]\label{conj:band}
+The interval $[\,k+2,\ 2k+1\,]$ describes the full range of $m(p)$ for all $k\ge 1$ (verified
+by enumeration for $k\le 11$).
+\end{conjecture}
+
+\subsection{Self-overlap density}
+
+The fraction of unbordered handshakes falls with length and converges from above to the
+bifix-free density. A prefix is unbordered when no proper prefix equals a suffix (no proper
+border); \cref{tab:unbordered} gives the fraction at each length. The values decrease, are
+equal in consecutive pairs, and approach the known limiting density $\approx 0.2678$ of
+bifix-free binary words \citep{oeisA003000}.
+
+\begin{table}[t]
+  \centering
+  \caption{Fraction of unbordered (bifix-free) handshakes by length, $k\le 13$. The sequence
+  decreases monotonically toward the limiting bifix-free density $\approx 0.2678$.}
+  \label{tab:unbordered}
+  \begin{tabular}{lr}
+    \toprule
+    Length $k$ & Unbordered fraction \\
+    \midrule
+    1  & 1.0000 \\
+    2  & 0.5000 \\
+    3  & 0.5000 \\
+    4  & 0.3750 \\
+    5  & 0.3750 \\
+    6  & 0.3125 \\
+    7  & 0.3125 \\
+    8  & 0.2891 \\
+    9  & 0.2891 \\
+    10 & 0.2773 \\
+    11 & 0.2773 \\
+    12 & 0.2725 \\
+    13 & 0.2725 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The approach from above means unbordered prefixes, the ones that admit no self-overlap and so
+resist accidental partial matches, remain a constant-share minority rather than vanishing: at
+$k=13$ roughly $27\%$ of handshakes are still bifix-free.
+
+\subsection{Probe cost and the cooperative-bit threshold}
+
+A single cooperative bit decides whether a handshake can invade a population of defectors. We
+measure the fixation probability of $H_p$ under the \textsc{coop} regime invading an
+all-defector population, with neutral drift at $1/20 = 0.05$.
+
+\begin{table}[t]
+  \centering
+  \caption{Mean fixation probability of $H_p$ (\textsc{coop}) invading AllD, by number of $C$
+  bits in the prefix. Neutral drift is $0.05$. The all-$D$ prefix sits below neutral; one $C$
+  bit lifts it above.}
+  \label{tab:invade}
+  \begin{tabular}{lrr}
+    \toprule
+    Length $k$ & $0$ $C$-bits & $\ge 1$ $C$-bit \\
+    \midrule
+    4 & 0.0095 & 0.0773 \\
+    6 & 0.0096 & 0.0750--0.0770 \\
+    8 & 0.0098 & 0.0768 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The all-defect prefix is exploited rather than rewarded (\cref{tab:invade}). At $k=6$ it fixes
+at $0.0096$, below neutral, because resident defectors reproduce the all-$D$ prefix exactly:
+$H_p$ mis-recognises them as kin and then cooperates into exploitation. The mechanism shows in
+the per-pair payoffs: against AllD, $DDDD$ earns $0.020$ while $CDDD$ earns $0.995$. One $C$
+bit makes the prefix unforgeable by pure defectors and flips $H_p$ to invasion-favoured at
+$\approx 0.077$. The pattern is consistent at $k=4$ ($0.0095 \to 0.0773$) and $k=8$
+($0.0098 \to 0.0768$).
+
+\subsection{Mimic-resistance is structure-independent; vigilance fixes it}
+
+No prefix structure buys resistance to mimicry; the post-recognition regime does. A mimic of
+$p$ plays the prefix, is recognised, then defects forever. We state the reading as a
+hypothesis that the enumeration could have refuted.
+
+\begin{observation}[Regime, not structure]\label{obs:regime}
+Under \textsc{coop}, a mimic invades for every handshake tested, fixing at $\approx 0.15 > 0.05$.
+Under \textsc{grim} and \textsc{tft}, the mimic is resisted for every handshake tested, fixing
+at $\approx 0.015 < 0.05$. The direction does not vary with $k$ or with any structural
+invariant of $p$ (verified for $k\le 8$).
+\end{observation}
+
+\cref{tab:regime} gives the regime contrast. The uniformity is the point: had even one family
+of prefixes (Barker, unbordered, or otherwise) resisted a mimic under \textsc{coop}, the
+hypothesis would have failed. It does not. The \textsc{coop} regime reproduces the tension
+identified by \citet{robson1990}, where a recognition signal that triggers unconditional
+cooperation is forgeable and so invadable. The fix is behavioural rather than structural: a
+vigilant regime lets the mimic steal one round, then collapses the interaction to mutual
+defection ($P$ each), so the forgery yields nothing sustained. This is consistent with the
+empirical finding of \citet{knight2018} that self-recognition handshakes emerge in evolved
+machines and resist invasion when paired with conditional play.
+
+\begin{table}[t]
+  \centering
+  \caption{Mimic fixation probability by post-recognition regime, default $N=20$, $w=0.1$,
+  $n=200$. Neutral drift is $0.05$. Direction is uniform across all handshakes for $k\le 8$.}
+  \label{tab:regime}
+  \begin{tabular}{lrl}
+    \toprule
+    Regime & Mimic fixation & Outcome \\
+    \midrule
+    \textsc{coop} & $\approx 0.15$  & mimic invades ($>$ neutral) \\
+    \textsc{grim} & $\approx 0.015$ & mimic resisted ($<$ neutral) \\
+    \textsc{tft}  & $\approx 0.015$ & mimic resisted ($<$ neutral) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Robustness}\label{sec:robust}
+
+The regime result survives the full parameter grid. Sweeping $N\in\{10,20,50,100\}$,
+$w\in\{0.01,0.1,0.5\}$, and $n\in\{50,200,1000\}$ gives $36$ cells, and in all $36$ the
+\textsc{coop} mimic fixes above neutral while \textsc{grim} and \textsc{tft} fix below it. The
+margin scales with selection strength rather than reversing. \cref{tab:sensitivity} reports
+representative cells: at the weakest setting $(N{=}10, w{=}0.01, n{=}50)$ the gap is small
+(\textsc{coop} $0.109$ vs.\ \textsc{grim} $0.095$, neutral $0.100$); at the strongest
+$(N{=}100, w{=}0.5, n{=}1000)$ it is wide (\textsc{coop} $0.339$ vs.\ \textsc{grim} $0.000$).
+
+\begin{table}[t]
+  \centering
+  \caption{Mimic fixation across representative cells of the $36$-cell grid. The
+  \textsc{coop}/\textsc{grim} ordering holds in every cell; the margin grows with selection.}
+  \label{tab:sensitivity}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    $N$ & $w$ & $n$ & \textsc{coop} & \textsc{grim} & neutral $1/N$ \\
+    \midrule
+    10  & 0.01 & 50   & 0.109 & 0.095 & 0.100 \\
+    100 & 0.5  & 1000 & 0.339 & 0.000 & 0.010 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The structural conclusions are not cutoff artefacts. The automaton band (\cref{obs:band}) is
+confirmed for all $k\le 11$ and the unbordered density (\cref{tab:unbordered}) for all $k\le 13$,
+in each case with the pattern stable across the final lengths enumerated rather than drifting
+near the boundary.
+
+\section{Related work}\label{sec:related}
+
+The secret handshake, a recognition signal that licenses cooperation among bearers, originates
+with \citet{robson1990}; \citet{knight2018} show such self-recognition mechanisms emerge in
+finite-state strategies evolved under the Moran process and survive an invasion-of-defectors
+test. Strategy complexity for repeated-game automata was set out by \citet{rubinstein1986} and
+\citet{abreu1988}, who tie equilibrium structure to the number of machine states; $m(p)$ is the
+same measure applied to gated strategies. Low-complexity strategy structure and its
+classification by payoff geometry appear in \citet{press2012}, on strategies that fix an
+opponent's payoff, and \citet{hilbe2018}, on the partners-versus-rivals split of memory-one
+play. The simulation ecosystem for the iterated prisoner's dilemma runs from the original
+tournaments of \citet{axelrod1984} to the reproducible open framework of \citet{knight2016}.
+The classical invariants we read off each prefix come from separate fields: Barker sequences
+and the peak-sidelobe bound \citep{barker1953,turyn1961}, string overlaps and bordering
+\citep{guibas1981}, and the complexity measures of \citet{lempel1976} and \citet{massey1969}.
+The contribution here is the synthesis: a single exhaustive enumeration that profiles each
+recognition prefix jointly by its coding-theoretic, combinatorial, automata-theoretic, and
+evolutionary invariants, and reads the cross-field structure off one table. No individual
+invariant is new.
+
+\section{Limitations}\label{sec:limits}
+
+\emph{Construct validity.} We operationalise mimic-resistance as the fixation probability of a
+prefix-forging mutant falling below neutral drift. This captures the evolutionary question
+directly, but it does not capture every sense of resistance: a mimic could persist as a
+polymorphism without fixing, or impose costs short of takeover. We report fixation because it
+is the standard finite-population summary \citep{nowak2004,moran1958} and because the
+\textsc{coop}/\textsc{grim} contrast is unambiguous under it.
+
+\emph{External validity.} The numerical results hold within the enumerated regime: structural
+invariants for $k\le 13$, evolutionary invariants for $k\le 8$. Behaviour at unbounded prefix
+length is conjectural (\cref{conj:band}). The evolutionary model is a well-mixed Moran process
+with fixed population $N$ and the specific payoff matrix $R=3, S=0, T=5, P=1$; structured
+populations, alternative update rules, or a different payoff matrix may shift the margins, and
+we sweep $N$, $w$, and $n$ but not these.
+
+\emph{Evolutionary scope.} Fixation probabilities are enumerated only for $k\le 8$ ($510$
+handshakes), so claims about the regime contrast are verified there and not beyond.
+
+\emph{Proof status.} The automaton band and the unbordered-density limit are computational
+observations over the enumerated set, not proofs. \cref{conj:band} in particular is
+unproven.
+
+\section{Conclusion}\label{sec:conclusion}
+
+The reading that organises the rest follows from the regime result: since no prefix structure
+resists a mimic, the recognition signal is irreparably forgeable. Any prefix can be replayed
+by a cheat that then defects, and no choice of $k$, no Barker prefix, no unbordered prefix
+changes this. Defence against forgery therefore cannot live in the handshake. It has to live
+in the post-recognition strategy, where a vigilant regime makes recognition cheap to grant and
+defection cheap to resume. The recognition prefix is best read as an addressing scheme, not a
+security mechanism.
+
+Two open problems remain concrete. First, prove that $m(p)$ occupies exactly $[\,k+2,\ 2k+1\,]$
+for all $k$, upgrading \cref{conj:band} from an enumeration to a theorem about the minimised
+gated construction. Second, sweep alternative update rules and structured populations to test
+whether the \textsc{coop}/\textsc{grim} ordering, uniform across $36$ well-mixed cells, holds
+once the population is no longer well mixed.
+
+% AVAILABILITY-START
+\paragraph{Data and code availability.}
+The enumeration tool, the handshake atlas, and the full reproduction scripts are open-source,
+written in Python with NumPy. The pipeline is deterministic and uses no random number
+generator: fixation probabilities are computed in closed form, so every figure and table is
+exactly reproducible. Code and atlas are available at
+\url{https://github.com/Red-Cardigan/handshake-atlas}; a tagged release with a DOI will
+accompany the submission.
+% AVAILABILITY-END

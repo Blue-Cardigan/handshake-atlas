@@ -1,0 +1,178 @@
+% ABSTRACT-START
+\begin{abstract}
+A recognition prefix, or secret handshake, lets a strategy in the iterated
+prisoner's dilemma identify a partner before committing to cooperation: it plays
+a fixed word, then cooperates only if the opponent has echoed that word. The
+handshake idea and the structural invariants of binary words are each classical,
+yet the prefix space itself has not been enumerated and profiled as an object.
+We enumerate the deterministic recognition-prefix strategies and apply a joint
+structural and evolutionary battery: minimal-automaton size, aperiodic
+autocorrelation, self-overlap, sequence complexity, and Moran-process fixation
+under three post-recognition regimes. Profiling reproduces the complete Barker
+spectrum, with peak-sidelobe-one prefixes occurring at exactly
+$k=2,3,4,5,7,11,13$ and at no other length up to $13$, a spectrum nowhere
+encoded in the tool. The minimal Moore machine of a length-$k$ prefix takes
+every value in the band $[k+2,\,2k+1]$ for all $k\le 11$. A single cooperative
+bit decides whether a handshake can invade a population of defectors: the
+all-defect prefix sits below neutral drift, while one $C$ bit raises fixation
+above neutral. Mimic-resistance is structure-independent under cooperate-forever
+recognition, where a forger always invades, but vigilant grim and tit-for-tat
+regimes reverse this for every handshake across all $36$ tested parameter cells.
+The enumeration tool and all data are released open source for reproduction and
+extension.
+\end{abstract}
+% ABSTRACT-END
+
+\section{Introduction}
+\label{sec:intro}
+
+Cooperation in the iterated prisoner's dilemma (IPD) is fragile: a population of
+cooperators is open to invasion by defectors who take the tempting payoff and
+give nothing back \citep{axelrod1984}. One escape is recognition. If a strategy
+can identify a like-minded partner before it commits to cooperation, it can
+extend cooperation to kin and withhold it from everyone else. The classical
+device for this is the secret handshake \citep{robson1990}: a strategy plays a
+fixed sequence of moves, watches whether the opponent plays the same sequence,
+and cooperates only on a match. The handshake is a recognition prefix, a word
+$p\in\{C,D\}^k$ that gates the strategy's later behaviour.
+
+Recognition prefixes are not a curiosity. They emerge spontaneously when finite-
+state strategies are evolved in the Moran process: handshake-like prefixes
+appear in the machines that survive, and they sharpen the line between strategies
+that invade defectors and strategies that do not \citep{knight2018}. The prefix
+is also a natural unit of strategy complexity. A strategy realised by a finite
+automaton has a minimal-state form, and the number of states is the standard
+measure of how complicated the strategy is \citep{rubinstein1986,abreu1988}; a
+handshake is among the simplest constructions that still implements conditional
+cooperation, and low-complexity structure is where direct reciprocity tends to
+settle \citep{press2012,hilbe2018}.
+
+The handshake concept and the mathematics it touches are both well established,
+and they have been developed apart from each other. The minimal automaton of a
+strategy and its computation by Myhill--Nerode equivalence and partition
+refinement are textbook \citep{nerode1958,hopcroft1971,rubinstein1986}. The
+autocorrelation properties of binary words, and the lengths at which a word has a
+peak sidelobe of one, are the subject of the Barker-code literature
+\citep{barker1953}. The self-overlap structure of words, including which words
+have no proper border, has a combinatorial theory of its own
+\citep{guibas1981}. What has not been done is to treat the recognition-prefix
+space as a single object: to enumerate it exhaustively and to profile each prefix
+with all of these invariants at once, together with how the gated strategy fares
+evolutionarily. We do that here.
+
+We are precise about the novelty. The handshake mechanism is from
+\citet{robson1990}; the emergence of recognition in evolved machines and the
+invasion-of-defectors test are from \citet{knight2018}; every structural
+invariant we compute is a known primitive. The contribution is the synthesis:
+the exhaustive enumeration of the prefix space and its profiling under a joint
+structural and evolutionary battery, which lets us state where structure lives in
+the space, how it scales, and when it matters for cooperation. We claim the
+catalogue and what it reveals, not the concept or the primitives.
+
+\begin{itemize}
+  \item \textbf{An exhaustive enumeration with a joint invariant battery.} We
+    enumerate all deterministic recognition-prefix strategies and compute, for
+    each, a structural profile (minimal-automaton size, aperiodic
+    autocorrelation, self-overlap and borderedness, and sequence complexity) and
+    an evolutionary profile (Moran-process fixation under three post-recognition
+    regimes). The enumeration is deterministic and the fixation probabilities are
+    closed form, so the catalogue is exactly reproducible
+    (\cref{sec:method}).
+  \item \textbf{A reproducible family taxonomy.} We assign each prefix to one of
+    six rule-based families by priority predicates over its invariants, and we
+    cross-check the assignment against unsupervised clustering of the invariant
+    vectors (\cref{tab:families}, \cref{sec:results}).
+  \item \textbf{Findings.} Profiling recovers the complete Barker spectrum as a
+    validation of the autocorrelation pipeline (\cref{tab:barker}); the minimal
+    automaton occupies an exact band $[k+2,\,2k+1]$ for every enumerated length
+    $k\le 11$ (\cref{tab:autoband}); a
+    single cooperative bit is the threshold for a handshake to invade a defector
+    population (\cref{tab:invade}); and mimic-resistance is structure-independent
+    under cooperate-forever recognition but is restored for every handshake by the
+    vigilant grim and tit-for-tat regimes (\cref{tab:regime},
+    \cref{tab:sensitivity}).
+\end{itemize}
+
+\section{Preliminaries}
+\label{sec:prelim}
+
+\paragraph{Stage game and payoffs.}
+Each round both players choose an action from $\{C,D\}$, where $C$ is cooperate
+and $D$ is defect. The payoffs are $R=3$ for mutual cooperation, $P=1$ for mutual
+defection, $T=5$ to a defector facing a cooperator, and $S=0$ to the exploited
+cooperator. These satisfy $T>R>P>S$ and $2R>T+S$, the standard prisoner's-dilemma
+ordering \citep{axelrod1984}. A match runs for $n$ rounds ($n=200$ by default),
+and a player's score is the mean payoff per round.
+
+\paragraph{Recognition-prefix strategies.}
+A handshake is a recognition prefix $p\in\{C,D\}^k$ of length $k\ge 1$. The gated
+strategy $H_p$ with post-recognition regime $\rho$ behaves as follows. For the
+first $k$ rounds it plays $p$ regardless of what the opponent does. After round
+$k$ it compares the opponent's first $k$ actions with $p$. If they are equal, the
+opponent is recognised and $H_p$ enters regime $\rho$; otherwise $H_p$ defects on
+every remaining round. The first $k$ rounds are the recognition phase, and the
+prefix doubles as the signal $H_p$ emits and the password it requires.
+
+\paragraph{Post-recognition regimes.}
+We study three regimes $\rho\in\{\textsc{coop},\textsc{grim},\textsc{tft}\}$.
+Under \textsc{coop} the strategy cooperates on every round after recognition; this
+is the classical secret handshake of \citet{robson1990}, which trusts a
+recognised partner unconditionally. Under \textsc{grim} the strategy cooperates
+with a recognised partner until that partner defects once, then defects on every
+remaining round. Under \textsc{tft} the strategy cooperates on the first post-
+recognition round and thereafter copies the partner's previous action. The
+regimes differ only in how a recognised partner is treated; recognition itself is
+identical.
+
+\paragraph{The mimic.}
+A mimic of $p$ is the cheat that forges the signal: it plays $p$ through the
+recognition phase, so $H_p$ recognises it, and then defects on every remaining
+round. The mimic is the natural adversary for the handshake, and whether it can
+invade a population of handshakers measures how much the recognition gate is
+worth.
+
+\paragraph{Minimal Moore machine.}
+We realise $H_p$ as a Moore machine, a finite-state automaton that emits an
+action in each state and transitions on the opponent's action. Two states are
+equivalent when they induce the same behaviour against every continuation, the
+Myhill--Nerode relation \citep{nerode1958}; collapsing equivalent states gives
+the unique minimal machine, which we compute by Hopcroft partition refinement
+\citep{hopcroft1971}. We write $m(p)$ for the number of states of this minimal
+machine. It is the Rubinstein measure of strategy complexity
+\citep{rubinstein1986}, the size of the smallest automaton that plays $H_p$.
+
+\paragraph{Aperiodic autocorrelation.}
+Map $p$ to its $\pm1$ image $a\in\{-1,+1\}^N$ with $N=k$ by sending $C$ to $+1$
+and $D$ to $-1$. The aperiodic autocorrelation at shift $v$ is
+$c_v=\sum_j a_j a_{j+v}$, summed over the overlapping positions. The sidelobes
+are the $c_v$ for $v\neq 0$, the peak sidelobe is $\max_{v\neq 0}|c_v|$, and the
+merit factor is $N^2/(2\sum_{v\neq 0} c_v^2)$. A word is a Barker code when its
+peak sidelobe is at most $1$ \citep{barker1953}, the strongest possible
+flatness, and such codes exist only at a short list of lengths
+\citep{turyn1961}.
+
+\paragraph{Self-overlap and bordered words.}
+A border of $p$ is a proper prefix that is also a suffix. A word is unbordered,
+or bifix-free, when it has no proper border, so it cannot align with a shifted
+copy of itself except at full overlap. Borders and the correlation polynomial
+that records them are the Guibas--Odlyzko theory of string overlaps
+\citep{guibas1981}; the number of unbordered binary words of each length is the
+sequence \citep{oeisA003000}.
+
+\paragraph{Sequence complexity.}
+We summarise the incompressibility of $p$ by its LZ76 production complexity, the
+number of distinct factors a left-to-right parse produces \citep{lempel1976}, and
+by its linear complexity, the length of the shortest linear-feedback shift
+register that generates $p$, computed by the Berlekamp--Massey algorithm
+\citep{massey1969}. Together these separate structured prefixes from
+near-incompressible ones.
+
+\paragraph{Moran process.}
+We place $H_p$ in a finite population of size $N$ ($N=20$ by default) evolving
+under the Moran process \citep{moran1958}: each step one individual reproduces
+with probability proportional to fitness and one is removed at random. Fitness is
+mapped from match score with selection intensity $w$ ($w=0.1$ by default). The
+fixation probability of a single mutant in a resident population follows the
+closed-form constant-selection formula \citep{nowak2004}, which we evaluate
+exactly with no simulation. The neutral-drift baseline, the fixation probability
+of a selectively neutral mutant, is $1/N$.

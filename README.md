@@ -71,6 +71,13 @@ sidelobe sparkline. It is a static site — deployable on Vercel by pointing the
 root at `web/` (no build step). See [`docs/METHODS.md`](docs/METHODS.md) for definitions
 and [`docs/LEARNINGS.md`](docs/LEARNINGS.md) for what the atlas reveals.
 
+## The paper
+
+[`paper/`](paper/) holds an arXiv draft, *A Periodic Table of Secret Handshakes*, reporting
+the novel findings. Every number in it traces to a reproducible computation (the ledger in
+[`paper/BRIEF.md`](paper/BRIEF.md)); references are hand-verified; the draft went through an
+adversarial-referee and a deslopify review pass. Compile with `latexmk -pdf main.tex`.
+
 ## Scale honesty
 
 Cheap structural invariants are computed for **every** handshake up to `struct_max`
